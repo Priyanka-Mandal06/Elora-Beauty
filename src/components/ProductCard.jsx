@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart, increaseQuantity, decreaseQuantity } from '../features/cart/cartSlice';
 import { addRecentlyViewed } from '../features/history/historySlice';
@@ -6,6 +6,7 @@ import { addRecentlyViewed } from '../features/history/historySlice';
 function ProductCard({ product }) {
   const dispatch = useDispatch();
   const [touchActive, setTouchActive] = useState(false);
+  const touchTimer = useRef(null);
 
   const cartItem = useSelector((state) => state.cart.items.find((item) => item.id === product.id));
 
@@ -28,23 +29,30 @@ function ProductCard({ product }) {
     dispatch(addRecentlyViewed(product));
   };
 
-  const handleImagePointerDown = (event) => {
+  const handleTouch = (event) => {
     if (event.pointerType === 'touch') {
-      setTouchActive((previous) => !previous);
+      setTouchActive(true);
+
+      clearTimeout(touchTimer.current);
+
+      touchTimer.current = setTimeout(() => {
+        setTouchActive(false);
+      }, 500);
     }
   };
 
+  useEffect(() => {
+    return () => clearTimeout(touchTimer.current);
+  }, []);
+
   return (
     <div
-      className={`group rounded-sm p-2 transition-colors duration-300 ${
-        touchActive ? 'bg-[#E8E1DB]' : 'bg-transparent hover:bg-[#E8E1DB]'
+      onPointerDown={handleTouch}
+      className={`group rounded-sm p-2 transition-all duration-300 ${
+        touchActive ? 'bg-[#E1CECA]' : 'bg-transparent hover:bg-[#E1CECA]'
       }`}
     >
-      <div
-        className="relative overflow-hidden cursor-pointer"
-        onPointerDown={handleImagePointerDown}
-        onClick={handleProductView}
-      >
+      <div className="relative overflow-hidden cursor-pointer" onClick={handleProductView}>
         <img
           src={product.image}
           alt={product.name}
