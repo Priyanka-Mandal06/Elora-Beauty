@@ -14,7 +14,7 @@ The application demonstrates component-based development, centralized state mana
 
 Watch the complete walkthrough of ELORA BEAUTY, showcasing its features, shopping cart functionality, responsive design and user experience.
 
-▶️ [Watch Project Demo](https://drive.google.com/file/d/1ACTQaytqmqfkHM_jqxn6tGN4qS9QfwTk/view?usp=sharing)
+▶️ [Watch Project Demo]([https://drive.google.com/file/d/1ACTQaytqmqfkHM_jqxn6tGN4qS9QfwTk/view?usp=sharing](https://drive.google.com/file/d/11wXVyqwkZiwkdg47Y01HJVETmMx-YR-V/view?usp=sharing))
 
 ## 🌐 Live Website
 
