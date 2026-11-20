@@ -1,64 +1,106 @@
-import { useDispatch } from 'react-redux';
-import { ShoppingBag, Star } from 'lucide-react';
-
-import { addToCart } from '../features/cart/cartSlice';
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { addToCart, increaseQuantity, decreaseQuantity } from '../features/cart/cartSlice';
 import { addRecentlyViewed } from '../features/history/historySlice';
 
 function ProductCard({ product }) {
   const dispatch = useDispatch();
+  const [touchActive, setTouchActive] = useState(false);
 
-  // Record the product when viewed.
+  const cartItem = useSelector((state) => state.cart.items.find((item) => item.id === product.id));
+
+  const quantity = cartItem?.quantity || 0;
+  const isAdded = quantity > 0;
+
+  const handleAddToCart = () => {
+    dispatch(addToCart(product));
+  };
+
+  const handleIncrease = () => {
+    dispatch(increaseQuantity(product.id));
+  };
+
+  const handleDecrease = () => {
+    dispatch(decreaseQuantity(product.id));
+  };
+
   const handleProductView = () => {
     dispatch(addRecentlyViewed(product));
   };
 
+  const handleImagePointerDown = (event) => {
+    if (event.pointerType === 'touch') {
+      setTouchActive((previous) => !previous);
+    }
+  };
+
   return (
-    <div className="group">
-      {/* Product image and add-to-cart button. */}
-      <div className="relative overflow-hidden bg-[#F1ECE6]">
+    <div
+      className={`group rounded-sm p-2 transition-colors duration-300 ${
+        touchActive ? 'bg-[#E8E1DB]' : 'bg-transparent hover:bg-[#E8E1DB]'
+      }`}
+    >
+      <div
+        className="relative overflow-hidden cursor-pointer"
+        onPointerDown={handleImagePointerDown}
+        onClick={handleProductView}
+      >
         <img
           src={product.image}
           alt={product.name}
-          loading="lazy"
-          onClick={handleProductView}
-          className="h-64 w-full cursor-pointer object-cover transition duration-700 group-hover:scale-105 md:h-80"
+          className={`w-full h-72 object-cover transition-transform duration-500 ${
+            touchActive ? 'scale-105' : 'group-hover:scale-105'
+          }`}
         />
 
-        <span className="absolute left-3 top-3 bg-white px-3 py-2 text-[9px] tracking-widest text-[#352B29]">
-          {product.tag}
-        </span>
-
-        <button
-          onClick={() => dispatch(addToCart(product))}
-          aria-label={`Add ${product.name} to cart`}
-          className="absolute bottom-3 left-3 right-3 flex items-center justify-center gap-2 bg-white/95 py-3 text-xs tracking-wider text-[#352B29] transition hover:bg-[#352B29] hover:text-white"
-        >
-          <ShoppingBag size={15} />
-          ADD TO BAG
-        </button>
+        <div
+          className={`absolute inset-0 bg-black transition-opacity duration-300 ${
+            touchActive ? 'opacity-10' : 'opacity-0 group-hover:opacity-10'
+          }`}
+        />
       </div>
 
-      {/* Product details. */}
       <div className="pt-4">
-        <div className="mb-2 flex items-center gap-1 text-xs">
-          <Star size={13} fill="#C49A6C" color="#C49A6C" />
-          <span>{product.rating}</span>
-        </div>
-
-        <p className="text-[10px] uppercase tracking-widest text-[#B77C78]">{product.category}</p>
-
-        <h3
-          onClick={handleProductView}
-          className="mt-1 cursor-pointer font-serif text-lg text-[#352B29]"
-        >
+        <h3 className="text-[#352B29] font-medium cursor-pointer" onClick={handleProductView}>
           {product.name}
         </h3>
 
-        <div className="mt-2 flex items-center gap-3">
-          <span className="text-sm font-semibold">₹{product.price}</span>
+        <p className="text-[#8B7772] mt-1">₹{product.price}</p>
 
-          <span className="text-xs text-gray-400 line-through">₹{product.originalPrice}</span>
-        </div>
+        {isAdded ? (
+          <div className="mt-4 flex items-center justify-between gap-2">
+            <span className="flex-1 text-center py-3 text-xs tracking-wider bg-[#D6D3D1] text-[#57534E]">
+              ADDED TO BAG
+            </span>
+
+            <div className="flex items-center border border-[#352B29]">
+              <button
+                onClick={handleDecrease}
+                aria-label="Decrease quantity"
+                className="px-3 py-3 text-[#352B29] hover:bg-[#EBD8D2] active:bg-[#EBD8D2]"
+              >
+                −
+              </button>
+
+              <span className="min-w-7 text-center text-sm text-[#352B29]">{quantity}</span>
+
+              <button
+                onClick={handleIncrease}
+                aria-label="Increase quantity"
+                className="px-3 py-3 text-[#352B29] hover:bg-[#EBD8D2] active:bg-[#EBD8D2]"
+              >
+                +
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button
+            onClick={handleAddToCart}
+            className="w-full mt-4 py-3 text-sm tracking-wider transition-colors duration-300 bg-white text-[#352B29] border border-[#352B29] hover:bg-[#352B29] hover:text-white active:bg-[#352B29] active:text-white"
+          >
+            ADD TO BAG
+          </button>
+        )}
       </div>
     </div>
   );

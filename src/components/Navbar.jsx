@@ -1,14 +1,26 @@
 import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Search, ShoppingBag, Menu, X, Clock3 } from 'lucide-react';
 
 function Navbar({ cartCount, onCartClick, searchQuery, onSearchChange, onSearchSubmit }) {
+  const location = useLocation();
+
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
 
-  // Close the mobile menu after selecting a link.
+  // Close the mobile navigation menu.
   const closeMenu = () => setMenuOpen(false);
 
-  // Submit the search query.
+  // Highlight the currently selected navigation section.
+  const getNavLinkClass = (hash) => {
+    const isActive = location.hash === hash || (!location.hash && hash === '#home');
+
+    return `transition-colors duration-300 ${
+      isActive ? 'text-[#B77C78]' : 'text-[#352B29] hover:text-[#B77C78]'
+    }`;
+  };
+
+  // Submit the product search.
   const handleSubmit = (event) => {
     event.preventDefault();
 
@@ -18,7 +30,7 @@ function Navbar({ cartCount, onCartClick, searchQuery, onSearchChange, onSearchS
     }
   };
 
-  // Close search and clear the current input.
+  // Close search and clear its input.
   const closeSearch = () => {
     setSearchOpen(false);
     onSearchChange('');
@@ -31,8 +43,9 @@ function Navbar({ cartCount, onCartClick, searchQuery, onSearchChange, onSearchS
           {/* Mobile menu toggle. */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="text-[#352B29] md:hidden"
+            className="text-[#352B29] transition-colors hover:text-[#B77C78] active:text-[#B77C78] md:hidden"
             aria-label="Toggle navigation menu"
+            aria-expanded={menuOpen}
           >
             {menuOpen ? <X size={23} /> : <Menu size={23} />}
           </button>
@@ -48,24 +61,28 @@ function Navbar({ cartCount, onCartClick, searchQuery, onSearchChange, onSearchS
           </a>
 
           {/* Desktop navigation. */}
-          <nav className="hidden items-center gap-6 text-sm text-[#352B29] md:flex lg:gap-8">
-            <a href="#home" className="transition hover:text-[#B77C78]">
+          <nav className="hidden items-center gap-6 text-sm md:flex lg:gap-8">
+            <a href="#home" className={getNavLinkClass('#home')}>
               Home
             </a>
-            <a href="#categories" className="transition hover:text-[#B77C78]">
+
+            <a href="#categories" className={getNavLinkClass('#categories')}>
               Categories
             </a>
-            <a href="#products" className="transition hover:text-[#B77C78]">
+
+            <a href="#products" className={getNavLinkClass('#products')}>
               Best Sellers
             </a>
+
             <a
               href="#history"
-              className="flex items-center gap-1.5 transition hover:text-[#B77C78]"
+              className={`flex items-center gap-1.5 ${getNavLinkClass('#history')}`}
             >
               <Clock3 size={15} />
               History
             </a>
-            <a href="#about" className="transition hover:text-[#B77C78]">
+
+            <a href="#about" className={getNavLinkClass('#about')}>
               About
             </a>
           </nav>
@@ -91,7 +108,7 @@ function Navbar({ cartCount, onCartClick, searchQuery, onSearchChange, onSearchS
                   type="submit"
                   aria-label="Submit search"
                   disabled={!searchQuery.trim()}
-                  className="ml-2 shrink-0 text-[#8B5E59] transition hover:text-[#B77C78] disabled:opacity-40"
+                  className="ml-2 shrink-0 text-[#8B5E59] transition-colors hover:text-[#B77C78] disabled:opacity-40"
                 >
                   <Search size={19} />
                 </button>
@@ -100,7 +117,7 @@ function Navbar({ cartCount, onCartClick, searchQuery, onSearchChange, onSearchS
                   type="button"
                   onClick={closeSearch}
                   aria-label="Close search"
-                  className="ml-2 shrink-0 text-[#9A8983] hover:text-[#352B29]"
+                  className="ml-2 shrink-0 text-[#9A8983] transition-colors hover:text-[#352B29]"
                 >
                   <X size={16} />
                 </button>
@@ -109,7 +126,7 @@ function Navbar({ cartCount, onCartClick, searchQuery, onSearchChange, onSearchS
               <button
                 onClick={() => setSearchOpen(true)}
                 aria-label="Open product search"
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-[#D9C5BD] text-[#352B29] transition hover:bg-[#EBD8D2] hover:text-[#8B5E59]"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-[#D9C5BD] text-[#352B29] transition-colors hover:bg-[#EBD8D2] hover:text-[#8B5E59] active:bg-[#EBD8D2]"
               >
                 <Search size={19} />
               </button>
@@ -119,7 +136,7 @@ function Navbar({ cartCount, onCartClick, searchQuery, onSearchChange, onSearchS
             <button
               onClick={onCartClick}
               aria-label={`Shopping cart with ${cartCount} items`}
-              className="relative flex h-10 w-10 items-center justify-center text-[#352B29] transition hover:text-[#B77C78]"
+              className="relative flex h-10 w-10 items-center justify-center text-[#352B29] transition-colors hover:text-[#B77C78] active:text-[#B77C78]"
             >
               <ShoppingBag size={21} />
 
@@ -134,21 +151,29 @@ function Navbar({ cartCount, onCartClick, searchQuery, onSearchChange, onSearchS
 
         {/* Mobile navigation. */}
         {menuOpen && (
-          <nav className="flex flex-col gap-4 pb-5 text-sm text-[#352B29] md:hidden">
-            <a href="#home" onClick={closeMenu}>
+          <nav className="flex flex-col gap-4 pb-5 text-sm md:hidden">
+            <a href="#home" onClick={closeMenu} className={getNavLinkClass('#home')}>
               Home
             </a>
-            <a href="#categories" onClick={closeMenu}>
+
+            <a href="#categories" onClick={closeMenu} className={getNavLinkClass('#categories')}>
               Categories
             </a>
-            <a href="#products" onClick={closeMenu}>
+
+            <a href="#products" onClick={closeMenu} className={getNavLinkClass('#products')}>
               Best Sellers
             </a>
-            <a href="#history" onClick={closeMenu} className="flex items-center gap-2">
+
+            <a
+              href="#history"
+              onClick={closeMenu}
+              className={`flex items-center gap-2 ${getNavLinkClass('#history')}`}
+            >
               <Clock3 size={15} />
               History
             </a>
-            <a href="#about" onClick={closeMenu}>
+
+            <a href="#about" onClick={closeMenu} className={getNavLinkClass('#about')}>
               About
             </a>
           </nav>
