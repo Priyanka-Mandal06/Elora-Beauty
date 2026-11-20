@@ -9,9 +9,20 @@ ELORA BEAUTY is a frontend e-commerce application designed around a premium beau
 The application demonstrates component-based development, centralized state management, client-side routing, and browser-based data persistence.
 
 
-## Live Demo
+
+## 🎥 Project Demo
+
+Watch the complete walkthrough of ELORA BEAUTY, showcasing its features, shopping cart functionality, responsive design and user experience.
+
+▶️ [Watch Project Demo](https://drive.google.com/file/d/1ACTQaytqmqfkHM_jqxn6tGN4qS9QfwTk/view?usp=sharing)
+
+## 🌐 Live Website
 
 [Visit ELORA BEAUTY](https://elora-beauty-xi.vercel.app/)
+
+## 💻 Source Code
+
+[View GitHub Repository](https://github.com/Priyanka-Mandal06/Elora-Beauty)
 
 
 ## Key Features
